@@ -1,0 +1,28 @@
+name: Make Snake
+on:
+  schedule:
+    - cron: "0 */6 * * *" 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Generate SVG, GIF
+        uses: Platane/snk@master
+        with:
+          github_user_name: ${{github.repository_owner}}
+          svg_out_path: ./.github/assets/${{github.repository_owner}}.svg
+          gif_out_path: ./.github/assets/${{github.repository_owner}}.gif
+
+      # https://raw.githubusercontent.com/nberlette/.github/main>/.github/assets/<file>
+      #- name: Push to main
+      #  uses: crazy-max/ghaction-github-pages@v2.5.0
+      #  with:
+      #    target_branch: snake
+      #    build_dir: .github/assets
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
