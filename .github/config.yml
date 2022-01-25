@@ -1,0 +1,18 @@
+blank_issues_enabled: false
+contact_links:
+  -
+    name: "Funding Open Source Software · Flourd"
+    url: https://funding.flourd.com
+    about: "Information regarding Open Source Software and its funding."
+  -
+    name: "Code of Conduct · Flourd"
+    url: https://conduct.flourd.com
+    about: "Community Code of Conduct information."
+  - 
+    name: "Community Support · Flourd"
+    url: https://community.flourd.com
+    about: "Please ask and answer questions here."
+  - 
+    name: "Security Bug Bounty · Flourd"
+    url: https://bugs.flourd.com
+    about: "Please report security vulnerabilities here."
