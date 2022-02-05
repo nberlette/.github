@@ -15,16 +15,16 @@ jobs:
         uses: Platane/snk@master
         with:
           github_user_name: ${{github.repository_owner}}
-          svg_out_path: ./.snk/contributions.svg
-          gif_out_path: ./.snk/contributions.gif
-      - run: |
-          (
-            for file in contributions.svg contributions.gif; do
-              mv -f "./.snk/${file-}" "./.github/assets/${file-}";
-            done;
-            rm -rf .snk;
-          ) || { echo "Error! Unable to move generated GIF/SVG to .github/assets!" && exit 1 }
-          echo "Success! Moved generated contributions.{svg,gif} to .github/assets!";
+          svg_out_path: /.github/assets/contributions.svg
+          gif_out_path: /.github/assets/contributions.gif
+#       - run: |
+#           (
+#             for file in contributions.svg contributions.gif; do
+#               mv -f "./.snk/${file-}" "./.github/assets/${file-}";
+#             done;
+#             rm -rf .snk;
+#           ) || { echo "Error! Unable to move generated GIF/SVG to .github/assets!" && exit 1 }
+#           echo "Success! Moved generated contributions.{svg,gif} to .github/assets!";
           
       # https://raw.githubusercontent.com/nberlette/.github/main>/.github/assets/<file>
       #- name: Push to main
