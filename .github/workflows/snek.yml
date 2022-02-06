@@ -1,8 +1,8 @@
 name: Snek
 on:
+  workflow_dispatch:
   schedule:
     - cron: "20 4 * * *" 
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -11,26 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Generate SVG, GIF
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          path: ./
+      - name: Ensure assets dir
+        run: mkdir -p -v ./.github/assets
+      - name: Make Snek
         uses: Platane/snk@master
         with:
           github_user_name: ${{github.repository_owner}}
-          svg_out_path: /.github/assets/contributions.svg
-          gif_out_path: /.github/assets/contributions.gif
-#       - run: |
-#           (
-#             for file in contributions.svg contributions.gif; do
-#               mv -f "./.snk/${file-}" "./.github/assets/${file-}";
-#             done;
-#             rm -rf .snk;
-#           ) || { echo "Error! Unable to move generated GIF/SVG to .github/assets!" && exit 1 }
-#           echo "Success! Moved generated contributions.{svg,gif} to .github/assets!";
-          
-      # https://raw.githubusercontent.com/nberlette/.github/main>/.github/assets/<file>
-      #- name: Push to main
-      #  uses: crazy-max/ghaction-github-pages@v2.5.0
-      #  with:
-      #    target_branch: snake
-      #    build_dir: .github/assets
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          svg_out_path: ./.github/assets/snek.svg
+          gif_out_path: ./.github/assets/snek.gif
+      - name: Verified commit
+        uses: swinton/commit@v2.0.0
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          files: |
+            ./.github/assets/snek.svg
+            ./.github/assets/snek.gif
+          commit-message: "[action] update: .github/assets/snek.{gif,svg}"
