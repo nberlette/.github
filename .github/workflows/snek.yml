@@ -1,34 +1,87 @@
 name: Snek
+env:
+  ASSETS: "./.github/assets"
+  REPOSITORY: ${{github.repository}}
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "20 4 * * *" 
-  push:
-    branches:
-      - main
+  # schedule:
+    # - cron: "20 4 * * *" 
+  # push:
+    # branches
+      # - main
 jobs:
   generate:
+    name: "Create contribution sneks"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-        with:
-          path: ./
-      - name: Ensure assets dir
-        run: mkdir -p -v ./.github/assets
-      - name: Make Snek
+      - 
+        name: "Create assets directory"
+        run: |
+          [ ! -d $ASSETS ] && 
+            mkdir -p -v $ASSETS && 
+              printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" $ASSETS
+      - 
+        name: "Generate Assets"
         uses: Platane/snk@master
         with:
           github_user_name: ${{github.repository_owner}}
-          svg_out_path: ./.github/assets/snek.svg
-          gif_out_path: ./.github/assets/snek.gif
-      - name: Verified commit
-        uses: swinton/commit@v2.0.0
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          svg_out_path: assets/snek.svg
+          gif_out_path: assets/snek.gif
+      - 
+        name: "Upload Artifacts"
+        uses: actions/upload-artifact@v2
         with:
-          files: |
-            ./.github/assets/snek.svg
-            ./.github/assets/snek.gif
-          commit-message: "[action] update: .github/assets/snek.{gif,svg}"
+          name: assets
+          path: $ASSETS/snek.*
+          
+  update:
+    name: "Push updated sneks to main"
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: main
+      BUILD_DIR: .
+      DRY_RUN: false
+      JEKYLL: false
+      VERBOSE: true
+      COMMIT_MSG: "Update snek.svg, snek.gif"
+      COMMITTER: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+      AUTHOR: "Nicholas Berlette <nick@berlette.com>"
+    steps:
+      - 
+        name: "Checkout Repository"
+        uses: actions/checkout@v2
+      -
+        name: "Download Artifacts"
+        uses: actions/download-artifact@v2
+        with:
+          name: assets
+          path: $ASSETS
+      - 
+        name: "Ensure $ASSETS Exists"
+        run: |
+          [ ! -d $ASSETS ] && 
+            mkdir -p -v $ASSETS && 
+              printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" $ASSETS
+      -
+        name: "Delete previous versions"
+        run: |
+          rm -rf $ASSETS/snek.* &&
+            printf "\n\e[1;32m✅️  Old files removed from %s\e[0m\n\n" $ASSETS
+      - 
+        name: "Commit + Push Updates"
+        uses: crazy-max/ghaction-github-pages@master
+        with:
+          # domain: github.com
+          repo: $REPOSITORY
+          target_branch: $BRANCH
+          build_dir: $BUILD_DIR
+          keep_history: true
+          author: $AUTHOR
+          committer: $COMMITTER
+          commit_message: $COMMIT_MSG
+          jekyll: $JEKYLL
+          dry_run: $DRY_RUN
+          verbose: $VERBOSE
+          
