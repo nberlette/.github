@@ -2,7 +2,6 @@ name: Snek
 env:
   ASSETS: .github/assets
   REPOSITORY: ${{github.repository}}
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 on:
   workflow_dispatch:
   # schedule:
@@ -44,48 +43,40 @@ jobs:
     name: "Push updated sneks to main"
     runs-on: ubuntu-latest
     needs: [build]
-    env:
-      BRANCH: main
-      DRY_RUN: false
-      JEKYLL: false
-      VERBOSE: true
-      COMMIT_MSG: "[chore] update contribution sneks"
-      COMMITTER: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-      AUTHOR: "Nicholas Berlette <nick@berlette.com>"
     steps:
       - 
         name: "Checkout Repository"
         uses: actions/checkout@v2
+      - 
+        name: "Ensure .github/assets Exists"
+        run: |
+          if [ -e "./.github/assets" ]; then
+            rm -rf ./.github/assets/snek.* 2>/dev/null && \
+            printf "\n\e[1;32m✅️  Old files removed from %s\e[0m\n\n" ".github/assets"
+          else
+            mkdir -p -v ./.github/assets && \
+            printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" "./github/assets"
+          fi
+        working-directory: ./
       -
         name: "Download Artifacts"
         uses: actions/download-artifact@v2.1.0
         with:
           name: assets
           path: ./.github/assets
-#       - 
-#         name: "Ensure .github/assets Exists"
-#         run: |
-#           if [ -e "./.github/assets" ]; then
-#             rm -rf ./.github/assets/snek.* 2>/dev/null && \
-#             printf "\n\e[1;32m✅️  Old files removed from %s\e[0m\n\n" ".github/assets"
-#           else
-#             mkdir -p -v ./.github/assets && \
-#             printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" "./github/assets"
-#           fi
-#         working-directory: ./
       - 
+        if: ${{ success() }}
         name: "Commit + Push Updates"
         uses: crazy-max/ghaction-github-pages@v2.6.0
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
-          # domain: github.com
-          repo: $REPOSITORY
-          target_branch: $BRANCH
+          target_branch: main
           build_dir: .
           keep_history: true
-          author: $AUTHOR
-          committer: $COMMITTER
-          commit_message: $COMMIT_MSG
-          jekyll: $JEKYLL
-          dry_run: $DRY_RUN
-          verbose: $VERBOSE
-          
+          author: "Nicholas Berlette <nick@berlette.com>"
+          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          commit_message: "[chore] update contribution sneks"
+          jekyll: false
+          dry_run: false
+          verbose: true
