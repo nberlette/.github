@@ -61,18 +61,18 @@ jobs:
         uses: actions/download-artifact@v2.1.0
         with:
           name: assets
-          path: .github/assets
-      - 
-        name: "Ensure .github/assets Exists"
-        run: |
-          [ ! -d .github/assets ] && 
-            mkdir -p -v .github/assets && 
-              printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" "./github/assets"
-      -
-        name: "Delete previous versions"
-        run: |
-          rm -rf .github/assets/snek.* &&
-            printf "\n\e[1;32m✅️  Old files removed from %s\e[0m\n\n" ".github/assets"
+          path: ./.github/assets
+#       - 
+#         name: "Ensure .github/assets Exists"
+#         run: |
+#           if [ -e "./.github/assets" ]; then
+#             rm -rf ./.github/assets/snek.* 2>/dev/null && \
+#             printf "\n\e[1;32m✅️  Old files removed from %s\e[0m\n\n" ".github/assets"
+#           else
+#             mkdir -p -v ./.github/assets && \
+#             printf "\n\e[1;32m✅️  Successfully created %s\e[0m\n\n" "./github/assets"
+#           fi
+#         working-directory: ./
       - 
         name: "Commit + Push Updates"
         uses: crazy-max/ghaction-github-pages@v2.6.0
