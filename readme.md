@@ -1,6 +1,6 @@
 # `.github` <img src="./.github/assets/github-logo.png?raw=true" width="40" align="left" alt="" />
 
-Some opinionated default scaffolding my public repositories which are missing their own configuration files.
+Some opinionated default scaffolding for my public repositories without their own configurations.
 
 ## Contents
 
